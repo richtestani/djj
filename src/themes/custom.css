@@ -1,0 +1,22 @@
+section.untangle-section {
+  padding-bottom: calc(var(--section-pad) * 0.5);
+}
+/** override fonts in some features **/
+.feat-row .feat-statement-head .feat-statement-title,
+.feat-row--cards .feat-cards-head .feat-cards-title {
+  font-size: clamp(2rem, 4vw, 3.5rem) !important;
+}
+
+.feat-row--cards .card.feat-pcard .feat-pcard-title {
+	font-size: 1rem;
+}
+
+.feat-row--cards .card.feat-pcard p
+ {
+	font-size: .8rem;
+}
+
+.feat-row--cards .card.feat-pcard .feat-bullets,
+.feat-row--cards .card.feat-pcard .eyebrow {
+	font-size: .6rem;
+}

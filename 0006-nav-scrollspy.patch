@@ -1,0 +1,249 @@
+From 6cbe3775259522554534c4f1ea5a61981ea3ee2a Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 15 Nov 2026 19:21:13 -0500
+Subject: [PATCH] Scroll-spy in the main nav; shared useScrollSpy composable
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_019m8fUf53imAE7B5Dv1NKDh
+---
+ CHANGELOG.md                    |  5 ++
+ README.md                       |  6 ++-
+ src/components/AppNav.vue       | 26 +++++++++-
+ src/components/ScrollSpyNav.vue | 29 ++---------
+ src/composables/useScrollSpy.js | 86 +++++++++++++++++++++++++++++++++
+ 5 files changed, 124 insertions(+), 28 deletions(-)
+ create mode 100644 src/composables/useScrollSpy.js
+
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 7538ae4..3e59821 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -8,6 +8,11 @@ and this project aims to follow [Semantic Versioning](https://semver.org/spec/v2
+ ## [Unreleased]
+ 
+ ### Added
++- **Scroll-spy in the main nav.** In-page nav links (`/#services`) highlight
++  as their section scrolls into view, with `aria-current="location"`; the
++  page's own link steps aside while one is lit, and the last section wins at
++  the bottom of the page. The observer logic moved into
++  `composables/useScrollSpy.js`, now shared with the docs `ScrollSpyNav`.
+ - **In-page links.** Sections take an `id` (next to `module`), as do features
+   rows and `rows`-page rows, so nav links and CTAs like `/#services` can point
+   at them. The router scrolls smoothly (instantly with reduced motion), offsets
+diff --git a/README.md b/README.md
+index 0491965..7a7aaa6 100644
+--- a/README.md
++++ b/README.md
+@@ -108,7 +108,11 @@ Reorder, remove, or duplicate entries freely. Unknown module names warn in dev.
+ The page scrolls there smoothly (instantly with reduced motion), landing
+ below the fixed header, including from another page. Features rows and
+ `rows`-page rows take `id` too. In-page links aren't highlighted as the
+-active nav item, since they'd all match the home page.
++active nav item by route, since they'd all match the home page. Instead, the
++nav scroll-spies them: the link for the section in view gets `.is-active`
++(styled like the active page link) and `aria-current="location"`, and the
++home link steps aside while one is lit. At the very bottom of the page the
++last linked section wins, so a short final section (Contact) still lights up.
+ 
+ ## Pages
+ 
+diff --git a/src/components/AppNav.vue b/src/components/AppNav.vue
+index 3dd2a31..bd30087 100644
+--- a/src/components/AppNav.vue
++++ b/src/components/AppNav.vue
+@@ -24,7 +24,13 @@
+       <li v-for="link in links" :key="link.to">
+         <!-- Vue Router ignores the #hash when marking links active, so
+              in-page links (/#services) would all light up on the home page. -->
+-        <RouterLink :to="link.to" class="nav-link" :exact-active-class="isHashLink(link.to) ? '' : undefined" @click="close">
++        <RouterLink
++          :to="link.to" class="nav-link"
++          :class="{ 'is-active': spyIdFor(link.to) && spyIdFor(link.to) === activeId }"
++          :aria-current="spyIdFor(link.to) && spyIdFor(link.to) === activeId ? 'location' : undefined"
++          :exact-active-class="isHashLink(link.to) || activeId ? '' : undefined"
++          @click="close"
++        >
+           <span class="nav-link-content" :class="{ 'icon-right': iconPosition === 'right' }">
+             <img v-if="link.icon" :src="asset(link.icon)" class="nav-link-icon" alt="" />
+             <span>{{ link.label }}</span>
+@@ -46,7 +52,9 @@ const isHashLink = (to) => typeof to === 'string' && to.includes('#')
+ // lodestar-pro-modules' MegaNav.vue (set nav.style: 'mega') — this
+ // component only ever renders flat top-level links.
+ import { ref, computed, onMounted, onUnmounted } from 'vue'
++import { useRoute } from 'vue-router'
+ import { site } from '@/site.config.js'
++import { useScrollSpy } from '@/composables/useScrollSpy.js'
+ import { asset } from '@/composables/useAssets.js'
+ 
+ const brand     = site.brand
+@@ -80,6 +88,20 @@ const links = computed(() =>
+   site.pages.filter(p => p.showInNav !== false).map(p => ({ label: p.name, to: '/' + p.slug }))
+ )
+ 
++// In-page links (`/#services`) on the current page are scroll-spied: the
++// link for the section in view gets .is-active. While one is active, the
++// page's own link (e.g. Home) stops showing as active, so only one lights up.
++const route = useRoute()
++function spyIdFor(to) {
++  if (!isHashLink(to)) return null
++  const [path, hash] = to.split('#')
++  return hash && (path || route.path) === route.path ? hash : null
++}
++const { activeId } = useScrollSpy(
++  () => links.value.map(l => spyIdFor(l.to)).filter(Boolean),
++  { topOffset: () => document.getElementById('main-nav')?.offsetHeight || 0, keepLast: false, bottomLast: true },
++)
++
+ // hoverBg / hoverText / bgImage are all optional — CSS falls back to the
+ // theme's own colors/transparent background when unset.
+ const navStyleVars = computed(() => {
+@@ -148,7 +170,7 @@ onUnmounted(() => { document.body.style.overflow = '' })
+   letter-spacing: var(--nav-link-tracking, 0.14em); text-transform: var(--nav-link-case, uppercase); color: var(--text);
+   opacity: 0.78; transition: opacity 0.2s, color 0.2s, background 0.2s; white-space: nowrap;
+ }
+-.nav-link:hover, .nav-link.router-link-exact-active {
++.nav-link:hover, .nav-link.router-link-exact-active, .nav-link.is-active {
+   opacity: 1; color: var(--nav-hover-text, var(--primary)); background: var(--nav-hover-bg, transparent);
+ }
+ 
+diff --git a/src/components/ScrollSpyNav.vue b/src/components/ScrollSpyNav.vue
+index c2650f2..8adcb50 100644
+--- a/src/components/ScrollSpyNav.vue
++++ b/src/components/ScrollSpyNav.vue
+@@ -12,37 +12,16 @@
+ </template>
+ 
+ <script setup>
+-import { ref, watch, onBeforeUnmount } from 'vue'
++import { useScrollSpy } from '@/composables/useScrollSpy.js'
+ 
+ const props = defineProps({
+   // [{ id: 'browser-support', text: 'Browser Support', depth: 'H2' }, ...]
+   headings: { type: Array, default: () => [] },
+ })
+ 
+-const activeId = ref(null)
+-let observer = null
+-
+-function setupObserver() {
+-  observer?.disconnect()
+-  if (!props.headings.length) return
+-
+-  observer = new IntersectionObserver(
+-    (entries) => {
+-      const visible = entries.find((e) => e.isIntersecting)
+-      if (visible) activeId.value = visible.target.id
+-    },
+-    { rootMargin: '0px 0px -70% 0px' }
+-  )
+-
+-  props.headings.forEach((h) => {
+-    const el = document.getElementById(h.id)
+-    if (el) observer.observe(el)
+-  })
+-}
+-
+-// re-observe whenever the heading list changes (e.g. on route/page change)
+-watch(() => props.headings, setupObserver, { immediate: true })
+-onBeforeUnmount(() => observer?.disconnect())
++// keepLast: headings are short, so the last one passed stays highlighted
++// until the next one arrives, instead of flickering off between them.
++const { activeId } = useScrollSpy(() => props.headings.map((h) => h.id), { keepLast: true })
+ </script>
+ 
+ <style scoped>
+diff --git a/src/composables/useScrollSpy.js b/src/composables/useScrollSpy.js
+new file mode 100644
+index 0000000..def818f
+--- /dev/null
++++ b/src/composables/useScrollSpy.js
+@@ -0,0 +1,86 @@
++// useScrollSpy — tracks which of a list of element ids is "current" as the
++// page scrolls. Shared by ScrollSpyNav (docs headings) and AppNav (in-page
++// links like `/#services`).
++//
++//   const { activeId } = useScrollSpy(() => ['services', 'approach'], {
++//     topOffset: () => 90,  // px hidden under a fixed header (number or fn)
++//     keepLast: false,      // keep the last id when none is in the band
++//     bottomLast: true,     // at the very bottom, the last id wins
++//   })
++//
++// An id is "in the band" while its element overlaps the area from
++// `topOffset` down to 30% of the viewport. The current id is the last one,
++// in list order, that's in the band. Ids not on the page are ignored, and
++// the observer rebuilds when the list (or the page under it) changes.
++import { ref, watch, onMounted, onBeforeUnmount, toValue } from 'vue'
++
++export function useScrollSpy(ids, { topOffset = 0, keepLast = true, bottomLast = false } = {}) {
++  const activeId = ref(null)
++  const visible = new Set()
++  let observer = null
++  let list = []
++
++  function pick() {
++    if (bottomLast && list.length && atBottom()) {
++      const last = [...list].reverse().find((id) => document.getElementById(id))
++      if (last) return (activeId.value = last)
++    }
++    // the lowest one in the band wins: a section whose top has just reached
++    // the band beats the one above whose bottom edge is still touching it
++    const current = [...list].reverse().find((id) => visible.has(id))
++    if (current || !keepLast) activeId.value = current ?? null
++  }
++
++  function atBottom() {
++    const doc = document.documentElement
++    return window.innerHeight + window.scrollY >= doc.scrollHeight - 2
++  }
++
++  function setup() {
++    observer?.disconnect()
++    visible.clear()
++    list = [...(toValue(ids) || [])]
++    activeId.value = null
++    if (!list.length || typeof IntersectionObserver === 'undefined') return
++
++    const top = Math.round(Number(toValue(topOffset)) || 0)
++    observer = new IntersectionObserver(
++      (entries) => {
++        for (const e of entries) e.isIntersecting ? visible.add(e.target.id) : visible.delete(e.target.id)
++        pick()
++      },
++      { rootMargin: `-${top}px 0px -70% 0px` },
++    )
++    attached.clear()
++    attach(observer, performance.now())
++  }
++
++  // Observe each id's element. On a first page load the nav can mount before
++  // the page's sections exist, so keep looking for missing ones for ~2s.
++  const attached = new Set()
++  function attach(obs, started) {
++    if (obs !== observer) return // a newer setup() replaced this one
++    for (const id of list) {
++      if (attached.has(id)) continue
++      const el = document.getElementById(id)
++      if (el) { obs.observe(el); attached.add(id) }
++    }
++    if (attached.size < list.length && performance.now() - started < 2000) {
++      requestAnimationFrame(() => attach(obs, started))
++    }
++  }
++
++  const onScroll = () => { if (bottomLast) pick() }
++
++  onMounted(() => {
++    // flush: 'post' — rebuild after the DOM for a new list/page is in place
++    watch(() => [...(toValue(ids) || [])].join('|'), setup, { immediate: true, flush: 'post' })
++    if (bottomLast) window.addEventListener('scroll', onScroll, { passive: true })
++  })
++  onBeforeUnmount(() => {
++    observer?.disconnect()
++    window.removeEventListener('scroll', onScroll)
++  })
++
++  return { activeId, refresh: setup }
++}
+-- 
+2.43.0
+
