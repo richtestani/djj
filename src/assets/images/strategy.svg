@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#087F87" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Strategy">
+  <circle cx="11" cy="13" r="8"/>
+  <circle cx="11" cy="13" r="4.5"/>
+  <circle cx="11" cy="13" r="1" fill="#087F87"/>
+  <path d="M11 13 19.5 4.5"/>
+  <path d="M16.5 4.5h3v3"/>
+</svg>

@@ -55,26 +55,26 @@ export const homeSections = [
 		  text: 'Advisory that connects strategic objectives with practical technology decisions and execution.',
 		  cta: { label: 'Discuss your priorities', to: '/contact' },
 		  points: [
-		    { label: 'Strategy', icon: 'icons/strategy.svg', title: 'Technology Strategy',
+		    { label: 'Strategy', icon: 'strategy.svg', title: 'Technology Strategy',
 		      text: 'Align technology priorities, operating models, and investment decisions with the outcomes your business needs.',
 		      points: [
 				  	'Transformation roadmaps', 
 				  	'Investment and portfolio priorities', 
 				  	'Executive and fractional CIO advisory'] },
 				  
-		    { label: 'Innovation', icon: 'icons/strategy.svg', title: 'AI & Automation',
+		    { label: 'Innovation', icon: 'innovation.svg', title: 'AI & Automation',
 		      text: 'Find practical opportunities to simplify work, improve decisions, and pursue responsible AI adoption.',
 		      points: [
 				  	'AI readiness and use cases', 
 				  	'Process automation opportunities', 
 				  	'Value-based prioritization'] },
-		    { label: 'Modernization', icon: 'icons/strategy.svg', title: 'ERP & Data Readiness',
+		    { label: 'Modernization', icon: 'modernization.svg', title: 'ERP & Data Readiness',
 		      text: 'Strengthen the systems and information your business relies on to operate and grow.',
 		      points: [
 				  	'ERP strategy and modernization', 
 				  	'Data quality and integration', 
 				  	'Reporting and manufacturing systems'] },
-		    { label: 'Governance', icon: 'icons/strategy.svg', title: 'Cybersecurity & AI Governance',
+		    { label: 'Governance', icon: 'governance.svg', title: 'Cybersecurity & AI Governance',
 		      text: 'Bring greater clarity to technology risk, accountability, resilience, and responsible innovation.',
 		      points: [
 				  	'Cyber risk and governance', 
