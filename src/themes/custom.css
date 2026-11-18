@@ -20,3 +20,7 @@ section.untangle-section {
 .feat-row--cards .card.feat-pcard .eyebrow {
 	font-size: .6rem;
 }
+
+#about .feat-row-body p {
+	font-size: .9rem;
+}

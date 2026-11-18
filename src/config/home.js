@@ -48,7 +48,7 @@ export const homeSections = [
 		    text: 'Independent, founder-led advisory for middle-market companies, with particular experience across manufacturing and industrial businesses.',
 		    cta: { label: 'Meet our founder', to: '/about' } },
 		{ layout: 'cards', 
-			id: "approach",
+			id: "what-we-do",
 		  numbered: true, 
 		  label: 'What we do',
 		  title: 'Four disciplines.\nOne business focus.',
@@ -85,7 +85,7 @@ export const homeSections = [
 	  },
           {
             "label": "A Better Place To Start",
-			  id:"free-assessment",
+			  id:"place-to-start",
             "title": "Know where you stand. See what comes next",
 			  "tone": "dark",
 			  "textSide":"left",
@@ -115,6 +115,7 @@ export const homeSections = [
 		  {
 		  
 	            "label": "Our Approach",
+			  id: "our-approach",
 	            "title": "Know where you stand. See what comes next",
 			  "text": "Technology transformation should start with understanding the business and end with tangible outcomes—not another report on a shelf.",
 			  layout: 'cards', 

@@ -6,31 +6,13 @@ export const footer = {
       {
         "heading": "Product",
         "links": [
-          {
-            "label": "Features",
-            "to": "/features"
-          },
-          {
-            "label": "Pricing",
-            "to": "/pricing"
-          },
-          {
-            "label": "Customers",
-            "to": "/customers"
-          }
+    
         ]
       },
       {
         "heading": "Company",
         "links": [
-          {
-            "label": "About",
-            "to": "/about"
-          },
-          {
-            "label": "Contact",
-            "to": "/contact"
-          }
+       
         ]
       }
     ],

@@ -13,9 +13,11 @@ export const nav = {
       "to": "/contact"
     },
     "links": [
-    	{ label: 'Services', to: '/#services' },
-		{ label: 'Our Approach', to: '/#approach'},
-		{ label: 'Free Assessment', to: '/#free-assessment'},
-		{ label: 'About', to: '/#about'}
+    	{ label: 'The Difference', to: '/#services' },
+		{ label: 'What We Do', to: '/#what-we-do'},
+		{ label: 'Free Assessment', to: '/#place-to-start'},
+		{ label: 'Our Approach', to: '/#our-approach'},
+		{ label: 'About', to: '/#about'},
+		{ label: 'Contact', to: '/contact'}
     ]
   }

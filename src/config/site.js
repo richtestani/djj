@@ -12,11 +12,11 @@ export const brand = {
 export const theme = "fresh" // north | fresh | pulse | harvest | press
 
 export const contact = {
-    "email": "hello@example.com",
+    "email": "rich@richtestani.com",
     "phone": "(555) 555-5555",
     "address": "123 Main St, Town, ST",
     "mapQuery": "123 Main St, Town, ST",
-    "formspree": ""
+    "formspree": "https://formspree.io/f/xqpqqnzg"
   }
 
 export const social = [
