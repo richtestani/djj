@@ -3,7 +3,7 @@
     <div class="container">
       <div class="section-head is-center">
         <p v-if="eyebrow" class="eyebrow">{{ eyebrow }}</p>
-        <h2 class="h-title">{{ title }}</h2>
+        <RichText as="h2" class="h-title" :text="title" />
       </div>
       <div class="gal" :class="`gal--${variant}`">
         <figure v-for="(img, i) in images" :key="i" class="gal-item">
@@ -15,6 +15,7 @@
 </template>
 
 <script setup>
+import RichText from '../components/prose/RichText.vue'
 import { asset } from '@/composables/useAssets.js'
 defineProps({
   eyebrow: String, title: { type: String, default: '' },

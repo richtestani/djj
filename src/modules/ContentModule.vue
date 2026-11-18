@@ -10,9 +10,9 @@
     <div class="container content-wrap">
       <p v-if="eyebrow" class="eyebrow">{{ eyebrow }}</p>
       <hr class="rule" />
-      <h1 class="h-title content-title">{{ title }}</h1>
+      <RichText as="h1" class="h-title content-title" :text="title" />
       <div class="content-body">
-        <p v-for="(para, i) in paragraphs" :key="i" class="content-para">{{ para }}</p>
+        <RichText v-for="(para, i) in paragraphs" :key="i" as="p" block class="content-para" :text="para" />
       </div>
       <RouterLink v-if="cta" :to="cta.to" class="btn content-cta">{{ cta.label }}</RouterLink>
     </div>
@@ -20,6 +20,7 @@
 </template>
 
 <script setup>
+import RichText from '../components/prose/RichText.vue'
 import { computed } from 'vue'
 
 const props = defineProps({

@@ -4,9 +4,9 @@
       <div class="container page-wrap">
         <p v-if="content.eyebrow" class="eyebrow">{{ content.eyebrow }}</p>
         <hr class="rule" />
-        <h1 class="h-title page-title">{{ content.title }}</h1>
+        <RichText as="h1" class="h-title page-title" :text="content.title" />
         <div class="page-body">
-          <p v-for="(para, i) in paragraphs" :key="i" class="page-para">{{ para }}</p>
+          <RichText v-for="(para, i) in paragraphs" :key="i" as="p" block class="page-para" :text="para" />
         </div>
         <RouterLink v-if="content.cta" :to="content.cta.to" class="btn page-cta">{{ content.cta.label }}</RouterLink>
       </div>
@@ -15,6 +15,7 @@
 </template>
 
 <script setup>
+import RichText from '../components/prose/RichText.vue'
 import { computed } from 'vue'
 const props = defineProps({ content: { type: Object, default: () => ({}) } })
 const paragraphs = computed(() =>

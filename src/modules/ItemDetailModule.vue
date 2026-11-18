@@ -2,7 +2,7 @@
   <section class="section">
     <div class="container id-wrap">
       <div v-if="paragraphs.length" class="id-body">
-        <p v-for="(para, i) in paragraphs" :key="i" class="id-para">{{ para }}</p>
+        <RichText v-for="(para, i) in paragraphs" :key="i" as="p" block class="id-para" :text="para" />
       </div>
       <dl v-if="item.meta?.length" class="id-meta">
         <div v-for="(m, i) in item.meta" :key="i" class="id-meta-row">
@@ -16,6 +16,7 @@
 </template>
 
 <script setup>
+import RichText from '../components/prose/RichText.vue'
 // Generic item-detail body — a description (string or string[]) plus an
 // optional flexible key/value list (`item.meta`: [{label, value}]) for
 // whatever extra facts a project's items carry — specs for a product,

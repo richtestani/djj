@@ -140,8 +140,18 @@ export const homeSections = [
 		  {
 			  "label": "Meet The Founder",
 			  id: "about",
-			  "title": "Experience at the intersection of business and technology.",
-			  "text": "David Jutcawitz FOUNDER & EXECUTIVE ADVISOR · FORMER SENIOR TECHNOLOGY EXECUTIVE David Jutcawitz is a senior technology and digital transformation executive whose leadership career includes Terex, GE Capital, and Pitney Bowes. His work spans enterprise technology strategy, board and C-suite alignment, global modernization, and technology-led business transformation. He has led strategic initiatives across AI, cybersecurity, digital product development, manufacturing systems, finance technology, ERP modernization, analytics, and operational improvement. His approach combines executive-level vision with practical delivery and cross-functional leadership. As a former Vice President and CIO supporting Genie, he advanced manufacturing technology, CRM capabilities, and analytics-enabled operations. Through DJJ, David brings this enterprise perspective to middle-market organizations, supported by a vetted network of delivery specialists.",
+			  "title": "Experience at the intersection of ==business and technology.==",
+			  name: "David Jutcawitz",
+			  role: "Founder & Executive Advisor · Former Senior Technology Executive",
+			  "text": [
+			    "David Jutcawitz is a senior technology and digital transformation executive whose leadership career includes **Terex**, **GE Capital**, and **Pitney Bowes**. His work spans enterprise technology strategy, board and C-suite alignment, global modernization, and technology-led business transformation.",
+			    "He has led strategic initiatives across AI, cybersecurity, digital product development, manufacturing systems, finance technology, ERP modernization, analytics, and operational improvement. His approach combines executive-level vision with practical delivery and cross-functional leadership.",
+			    "As a former Vice President and CIO supporting Genie, he advanced manufacturing technology, CRM capabilities, and analytics-enabled operations. Through DJJ, David brings this enterprise perspective to middle-market organizations, supported by a vetted network of delivery specialists.",
+			  ],
+			  links: [
+			    { label: "Connect with David", to: "/contact" },
+			    { label: "View LinkedIn Profile", to: "https://www.linkedin.com/" }, // TODO: David's profile URL
+			  ],
 			  "image": "https://picsum.photos/seed/service-row-3/1200/900",
 			  "textSide": "right"
 		  }

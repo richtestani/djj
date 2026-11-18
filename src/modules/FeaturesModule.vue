@@ -3,8 +3,8 @@
     <div class="container">
       <div v-if="eyebrow || title || intro" class="section-head is-center">
         <p v-if="eyebrow" class="eyebrow">{{ eyebrow }}</p>
-        <h2 v-if="title" class="h-title">{{ title }}</h2>
-        <p v-if="intro">{{ intro }}</p>
+        <RichText as="h2" v-if="title" class="h-title" :text="title" />
+        <RichText as="p" v-if="intro" :text="intro" />
       </div>
 
       <!-- grid (default): icon cards -->
@@ -13,10 +13,10 @@
           <p v-if="item.label" class="eyebrow feat-card-label">{{ item.label }}</p>
           <span v-if="item.icon && !isImage(item.icon)" class="feat-icon">{{ item.icon }}</span>
           <img v-else-if="item.icon" :src="asset(item.icon)" alt="" class="feat-icon-img" />
-          <h3 class="feat-title">{{ item.title }}</h3>
-          <p v-if="item.text" class="muted">{{ item.text }}</p>
+          <RichText as="h3" class="feat-title" :text="item.title" />
+          <RichText as="p" v-if="item.text" class="muted" :text="item.text" />
           <ul v-if="item.points?.length" class="feat-bullets">
-            <li v-for="(pt, pi) in item.points" :key="pi">{{ pt }}</li>
+            <RichText as="li" v-for="(pt, pi) in item.points" :key="pi" :text="pt" />
           </ul>
         </article>
       </div>
@@ -40,9 +40,9 @@
             <header class="feat-cards-head">
               <div>
                 <p v-if="item.label" class="eyebrow">{{ item.label }}</p>
-                <h3 class="feat-cards-title">{{ item.title }}<span v-if="item.accent" class="feat-accent">{{ item.accent }}</span></h3>
+                <h3 class="feat-cards-title"><RichText :text="item.title" /><span v-if="item.accent" class="feat-accent">{{ item.accent }}</span></h3>
               </div>
-              <p v-if="item.text" class="feat-row-text">{{ item.text }}</p>
+              <RichText as="p" v-if="item.text" class="feat-row-text" :text="item.text" />
             </header>
 
             <div class="feat-cards" :style="{ '--cols': item.columns || Math.min(item.points?.length || 3, 4) }">
@@ -50,10 +50,10 @@
                 <p v-if="cardLabel(item, pt, pi)" class="eyebrow">{{ cardLabel(item, pt, pi) }}</p>
                 <span v-if="pt.icon && !isImage(pt.icon)" class="feat-icon">{{ pt.icon }}</span>
                 <img v-else-if="pt.icon" :src="asset(pt.icon)" alt="" class="feat-icon-img" />
-                <h4 class="feat-pcard-title">{{ pt.title ?? pt }}</h4>
-                <p v-if="pt.text" class="muted">{{ pt.text }}</p>
+                <RichText as="h4" class="feat-pcard-title" :text="pt.title ?? pt" />
+                <RichText as="p" v-if="pt.text" class="muted" :text="pt.text" />
                 <ul v-if="pt.points?.length" class="feat-bullets">
-                  <li v-for="(b, bi) in pt.points" :key="bi">{{ b }}</li>
+                  <RichText as="li" v-for="(b, bi) in pt.points" :key="bi" :text="b" />
                 </ul>
               </article>
             </div>
@@ -67,11 +67,11 @@
           <template v-else-if="item.layout === 'statement'">
             <div class="feat-statement-head">
               <p v-if="item.label" class="eyebrow">{{ item.label }}</p>
-              <h3 class="feat-statement-title">{{ item.title }}<span v-if="item.accent" class="feat-accent">{{ item.accent }}</span></h3>
+              <h3 class="feat-statement-title"><RichText :text="item.title" /><span v-if="item.accent" class="feat-accent">{{ item.accent }}</span></h3>
             </div>
             <div class="feat-statement-body">
-              <p v-if="item.lead" class="feat-statement-lead">{{ item.lead }}</p>
-              <p v-for="(para, pi) in paragraphs(item.text)" :key="pi" class="feat-statement-text">{{ para }}</p>
+              <RichText as="p" v-if="item.lead" class="feat-statement-lead" :text="item.lead" />
+              <RichText v-for="(para, pi) in paragraphs(item.text)" :key="pi" as="p" block class="feat-statement-text" :text="para" />
               <RouterLink v-if="item.cta" :to="item.cta.to" class="btn btn--link feat-row-cta">{{ item.cta.label }} →</RouterLink>
             </div>
           </template>
@@ -79,20 +79,28 @@
           <!-- default layout: media beside the copy, sides alternating -->
           <template v-else>
             <div v-if="item.image" class="feat-row-media">
-              <img :src="asset(item.image)" :alt="item.alt || item.title" loading="lazy" />
+              <img :src="asset(item.image)" :alt="item.alt || plainText(item.title)" loading="lazy" />
             </div>
             <div class="feat-row-copy">
               <p v-if="item.label" class="eyebrow">{{ item.label }}</p>
-              <h3 class="h-title feat-row-title">{{ item.title }}</h3>
-              <p v-if="item.text" class="feat-row-text">{{ item.text }}</p>
+              <RichText as="h3" class="h-title feat-row-title" :text="item.title" />
+
+              <!-- name + role: a person line under the title (founder / team spotlight) -->
+              <p v-if="item.name" class="feat-row-name">{{ item.name }}</p>
+              <p v-if="item.role" class="eyebrow feat-row-role">{{ item.role }}</p>
+
+              <!-- text: a string or an array of paragraphs, markdown allowed -->
+              <div v-if="item.text" class="feat-row-body">
+                <RichText v-for="(para, pi) in paragraphs(item.text)" :key="pi" as="p" block class="feat-row-text" :text="para" />
+              </div>
 
               <!-- points: strings (check list) or { title, text } -->
               <ul v-if="item.points?.length" class="feat-points">
                 <li v-for="(pt, pi) in item.points" :key="pi">
-                  <template v-if="typeof pt === 'string'">{{ pt }}</template>
+                  <RichText v-if="typeof pt === 'string'" :text="pt" />
                   <template v-else>
-                    <strong class="feat-point-title">{{ pt.title }}</strong>
-                    <span v-if="pt.text" class="feat-point-text">{{ pt.text }}</span>
+                    <RichText as="strong" class="feat-point-title" :text="pt.title" />
+                    <RichText v-if="pt.text" class="feat-point-text" :text="pt.text" />
                   </template>
                 </li>
               </ul>
@@ -107,11 +115,20 @@
 
               <!-- quote: { text, cite } -->
               <blockquote v-if="item.quote?.text" class="feat-quote">
-                <p>{{ item.quote.text }}</p>
+                <RichText as="p" :text="item.quote.text" />
                 <cite v-if="item.quote.cite">{{ item.quote.cite }}</cite>
               </blockquote>
 
               <RouterLink v-if="item.cta" :to="item.cta.to" class="btn btn--link feat-row-cta">{{ item.cta.label }} →</RouterLink>
+
+              <!-- links: [{ label, to }] — a row of text links; http(s)/mailto open as plain links -->
+              <div v-if="item.links?.length" class="feat-row-links">
+                <template v-for="(l, li) in item.links" :key="li">
+                  <a v-if="isExternal(l.to)" :href="l.to" class="btn btn--link"
+                     v-bind="/^https?:/i.test(l.to) ? { target: '_blank', rel: 'noopener noreferrer' } : {}">{{ l.label }} ↗</a>
+                  <RouterLink v-else :to="l.to" class="btn btn--link">{{ l.label }} →</RouterLink>
+                </template>
+              </div>
             </div>
           </template>
         </article>
@@ -123,6 +140,8 @@
 <script setup>
 import { computed } from 'vue'
 import { asset } from '@/composables/useAssets.js'
+import RichText from '@/components/prose/RichText.vue'
+import { plainText } from '@/components/prose/richText.js'
 
 const props = defineProps({
   // grid (default) — icon cards in `columns` columns; items take icon,
@@ -130,7 +149,11 @@ const props = defineProps({
   // rows           — one feature per row. Each item is either:
   //   • default layout: `image` beside the copy, sides alternating; the copy
   //     takes label, title, text, points[] (strings, or { title, text }),
-  //     stats[] ({ value, label }), quote ({ text, cite }) and cta
+  //     stats[] ({ value, label }), quote ({ text, cite }) and cta. Also
+  //     `name` + `role` (a person line under the title), `text` as an array
+  //     of paragraphs, and `links: [{ label, to }]` (a row of text links).
+  //   Text fields take markdown — **bold**, *italic*, [links](/x),
+  //   ==highlight== — see components/prose/richText.js.
   //   • layout: 'cards': a full-width row with a split heading (label +
   //     title left, text right), its `points` laid out as cards
   //     ({ label, icon, title, text, points[] }), and an optional cta.
@@ -172,6 +195,8 @@ const sectionDark = computed(() => props.tone === 'dark')
 // An icon is an image if it looks like a path or URL; otherwise it's a glyph.
 const isImage = (s) => typeof s === 'string' && /\.(svg|png|jpe?g|webp|gif)$|^https?:|\//i.test(s)
 
+const isExternal = (to) => typeof to === 'string' && /^(https?:|mailto:|tel:)/i.test(to)
+
 const paragraphs = (text) => (Array.isArray(text) ? text : text ? [text] : [])
 
 function cardLabel(item, pt, i) {
@@ -211,6 +236,12 @@ function cardLabel(item, pt, i) {
 }
 .feat-row-title { margin-top: 0.6rem; }
 .feat-row-text { margin-top: 1rem; color: var(--text-muted); font-size: 1.08rem; }
+.feat-row-name { margin-top: 1.75rem; font-family: var(--font-display); font-size: clamp(1.3rem, 2.2vw, 1.75rem); font-weight: 700; line-height: 1.2; color: var(--text); }
+.feat-row-role { margin-top: 0.4rem; }
+.feat-row-body { margin-top: 1.5rem; }
+.feat-row-body > :first-child { margin-top: 0; }
+.feat-row-body .feat-row-text + .feat-row-text { margin-top: 1.1rem; }
+.feat-row-links { display: flex; flex-wrap: wrap; gap: 0.75rem 2rem; margin-top: 1.75rem; }
 .feat-points { list-style: none; margin-top: 1.5rem; display: grid; gap: 0.7rem; }
 .feat-points li { padding-left: 1.6rem; position: relative; }
 .feat-points li::before { content: '✓'; position: absolute; left: 0; color: var(--label-color, var(--primary)); font-weight: 700; }
