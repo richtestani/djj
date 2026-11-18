@@ -153,6 +153,8 @@ export const homeSections = [
 			    { label: "View LinkedIn Profile", to: "https://www.linkedin.com/" }, // TODO: David's profile URL
 			  ],
 			  "image": "https://picsum.photos/seed/service-row-3/1200/900",
+			  imageRatio: "1",
+			  mediaWidth: "narrow",
 			  "textSide": "right"
 		  }
         ]
